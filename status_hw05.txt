@@ -1,0 +1,27 @@
+Please fill in answers to the questions below:
+
+
+1. What's your name?
+Nicolas Karayakaylar
+
+2. What hostname did you deploy to?
+hw05.freudiancreations.website
+
+3. Which parts of this assignment did you have trouble with, if any?
+Just the bit relating to this Piazza question: https://piazza.com/class/kjvwd1w79kl1na?cid=163
+
+4. What part of your application state is on the server?
+The secret code.
+
+5. What part of your application state, if any, is in the browser?
+The list of guesses.
+
+And here's a list of tasks for grading comments. Just leave this here:
+ - Task 1
+ - Task 2
+ - Task 3
+ - Task 4
+ - Task 5
+ - Task 6
+ - Task 7
+ - Task 8

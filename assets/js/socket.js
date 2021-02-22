@@ -19,7 +19,6 @@ let callback = null;
 
 // The server sent us a new state.
 function state_update(st) {
-  st = Object.assign({}, state, {gamephase: "anything"});
   state = st;
   if (callback) {
     callback(st);

@@ -61,6 +61,63 @@ function Login() {
   );
 }
 
+function Setup() {
+  let roleEnum = {
+    OBSERVER : 1,
+    READYINGPLAYER : 2,
+    READYPLAYER : 3
+  }
+
+  const [role, setRole] = useState(roleEnum.OBSERVER);
+
+  function Observer() {
+    if (role != roleEnum.OBSERVER) {
+      return (
+        <button>Become Observer</button>
+      )
+    } else {
+      return null;
+    }
+  }
+
+  function ReadyPlayer() {
+    if (role == roleEnum.READYINGPLAYER) {
+      return (
+        <button>Become Ready Player</button>
+      )
+    } else {
+      return null;
+    }
+  }
+
+  function ReadyingPlayer() {
+    if (role != roleEnum.READYINGPLAYER) {
+      return (
+        <button>Become Readying Player</button>
+      )
+    } else {
+      return null;
+    }
+  }
+
+  return (
+    <div>
+      <div className="row">
+        <SetTitle text="Selecting Role" />
+        <div className="column">
+          <Observer />
+        </div>
+        <div className="column">
+          <ReadyPlayer />
+        </div>
+        <div className="column">
+          <ReadyingPlayer />
+        </div>
+      </div>
+    </div>
+  );
+}
+
 function GameOver(props) {
   let {reset} = props;
 
@@ -181,7 +238,7 @@ function Bulls() {
   if (gamephase == null) {
     body = <Login />;
   } else {
-    body = <div>gamephase is no longer null!</div>;
+    body = <Setup />;
   }
   
   /*if (guesses.join("").includes("A4")) {

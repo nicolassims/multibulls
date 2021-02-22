@@ -27,7 +27,7 @@ function state_update(st) {
 
 export function ch_login(usergame) {
   username = usergame.username;
-  channel = socket.channel(usergame.gamename, {});
+  channel = socket.channel("game:" + usergame.gamename, {});
   channel.join()
         .receive("ok", state_update)
         .receive("error", resp => {

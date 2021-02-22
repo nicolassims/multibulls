@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import 'milligram';
 
-import { ch_join, ch_push, ch_reset } from './socket';
+import { ch_login, ch_join, ch_push, ch_reset } from './socket';
 
 function SetTitle({text}) {
   useEffect(() => {
@@ -15,6 +15,50 @@ function SetTitle({text}) {
   });
 
   return <div />;
+}
+
+function Login() {
+  const [usergame, setUsergame] = useState(
+    {username: "",
+    gamename: ""}
+  );
+
+  function updateUsername(ev) {
+    setUsergame({
+      username: ev.target.value, 
+      gamename: usergame.gamename});
+  };
+
+  function updateGamename(ev) {
+    setUsergame({
+      username: usergame.username, 
+      gamename: ev.target.value});
+  };
+
+  return (
+    <div>
+      <div className="row">
+        <SetTitle text="Logging in..." />
+        <div className="column">
+          <h3>Enter Username</h3>
+          <input value={usergame.username}
+                  onChange={updateUsername}
+                  type="text" />
+        </div>
+        <div className="column">
+          <h3>Enter Game Name</h3>
+          <input value={usergame.gamename}
+                  onChange={updateGamename}
+                  type="text" />
+        </div>
+      </div>
+      <div className="row">
+        <button onClick={() => {ch_login(usergame)}}>
+          Login
+        </button>
+      </div>
+    </div>
+  );
 }
 
 function GameOver(props) {
@@ -111,9 +155,12 @@ function Controls({guess, reset}) {
 function Bulls() {
   const [state, setState] = useState({
     guesses: [],
+    gamephase: null,
+    winners: [],
+    playerscores: new Map(),
   });
 
-  let {guesses} = state;
+  let {guesses, gamephase, winners, playerscores} = state;
 
   useEffect(() => {
     ch_join(setState);
@@ -130,7 +177,14 @@ function Bulls() {
 
   let body = null;
 
-  if (guesses.join("").includes("A4")) {
+  console.log(state);
+  if (gamephase == null) {
+    body = <Login />;
+  } else {
+    body = <div>gamephase is no longer null!</div>;
+  }
+  
+  /*if (guesses.join("").includes("A4")) {
     body = <YouWin reset={reset} />;
   } else if (guesses.length < 8) {
     body = (
@@ -145,7 +199,7 @@ function Bulls() {
     )
   } else {
     body = <GameOver reset={reset} />;
-  }
+  }*/
 
   return (
     <div className="container">

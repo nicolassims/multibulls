@@ -6,21 +6,34 @@ let socket = new Socket(
 );
 socket.connect();
 
-let channel = socket.channel("game:1", {});
-
 let state = {
   guesses: [],
+  gamephase: null,
+  winners: [],
+  playerscores: new Map(),
 };
 
+let username = null;
+let channel = null;
 let callback = null;
 
 // The server sent us a new state.
 function state_update(st) {
-  console.log("New state", st);
+  st = Object.assign({}, state, {gamephase: "anything"});
   state = st;
   if (callback) {
     callback(st);
   }
+}
+
+export function ch_login(usergame) {
+  username = usergame.username;
+  channel = socket.channel(usergame.gamename, {});
+  channel.join()
+        .receive("ok", state_update)
+        .receive("error", resp => {
+          console.log("Unable to join", resp)
+        });
 }
 
 export function ch_join(cb) {
@@ -43,9 +56,3 @@ export function ch_reset() {
            console.log("Unable to push", resp)
          });
 }
-
-channel.join()
-       .receive("ok", state_update)
-       .receive("error", resp => {
-         console.log("Unable to join", resp)
-       });

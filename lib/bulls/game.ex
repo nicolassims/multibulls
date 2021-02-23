@@ -85,14 +85,15 @@ defmodule Bulls.Game do
     if ((role == "readyingplayer" && {:ok, "observer"} == fetch)
       || (role == "readyplayer" && {:ok, "readyingplayer"} == fetch)
       || (role == "observer")) do
-      %{ st | userstatus: Map.put(st, user, role) }
+      %{ st | userstatus: Map.put(st.userstatus, user, role) }
     else
       st
     end
   end
 
   def all_ready(st) do
-    #IO.puts(inspect(MapSet.to_list(st.userstatus)))
+    IO.inspect("all_ready")
+    IO.inspect(st.userstatus)
     Enum.each(st.userstatus, fn {_k, v} ->#check every value in the userstatus map
       if (v == "readyingplayer") do#if any of the players are still getting ready...
         %{ st | gamephase: "setup" }#you're still in the setup phase

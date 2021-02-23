@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import 'milligram';
 
-import { ch_login, ch_join, ch_push, ch_reset } from './socket';
+import { ch_changerole, ch_login, ch_join, ch_push, ch_reset } from './socket';
 
 function SetTitle({text}) {
   useEffect(() => {
@@ -62,18 +62,19 @@ function Login() {
 }
 
 function Setup() {
-  let roleEnum = {
-    OBSERVER : 1,
-    READYINGPLAYER : 2,
-    READYPLAYER : 3
+  const [role, setRole] = useState("observer");
+
+  function changeRole(role) {
+    setRole(role);
+    ch_changerole(role);
   }
 
-  const [role, setRole] = useState(roleEnum.OBSERVER);
-
   function Observer() {
-    if (role != roleEnum.OBSERVER) {
+    if (role != "observer") {
       return (
-        <button>Become Observer</button>
+        <button onClick={() => changeRole("observer")}>
+            Become Observer
+        </button>
       )
     } else {
       return null;
@@ -81,9 +82,11 @@ function Setup() {
   }
 
   function ReadyPlayer() {
-    if (role == roleEnum.READYINGPLAYER) {
+    if (role == "readyingplayer") {
       return (
-        <button>Become Ready Player</button>
+        <button onClick={() => changeRole("readyplayer")}>
+          Become Ready Player
+        </button>
       )
     } else {
       return null;
@@ -91,9 +94,11 @@ function Setup() {
   }
 
   function ReadyingPlayer() {
-    if (role != roleEnum.READYINGPLAYER) {
+    if (role != "readyingplayer") {
       return (
-        <button>Become Readying Player</button>
+        <button onClick={() => changeRole("readyingplayer")}>
+          Become Readying Player
+        </button>
       )
     } else {
       return null;
@@ -237,8 +242,10 @@ function Bulls() {
   console.log(state);
   if (gamephase == null) {
     body = <Login />;
-  } else {
+  } else if (gamephase == "setup") {
     body = <Setup />;
+  } else {
+    body = <div>Game is playing!</div>
   }
   
   /*if (guesses.join("").includes("A4")) {

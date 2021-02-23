@@ -27,7 +27,7 @@ function state_update(st) {
 
 export function ch_login(usergame) {
   username = usergame.username;
-  channel = socket.channel("game:" + usergame.gamename, {});
+  channel = socket.channel("game:" + usergame.gamename, username);
   channel.join()
         .receive("ok", state_update)
         .receive("error", resp => {
@@ -50,6 +50,17 @@ export function ch_push(guess) {
 
 export function ch_reset() {
   channel.push("reset", {})
+         .receive("ok", state_update)
+         .receive("error", resp => {
+           console.log("Unable to push", resp)
+         });
+}
+
+export function ch_changerole(role) {
+  let newmap = new Map()
+  newmap['user'] = username;
+  newmap['role'] = role;
+  channel.push("change role", newmap)
          .receive("ok", state_update)
          .receive("error", resp => {
            console.log("Unable to push", resp)

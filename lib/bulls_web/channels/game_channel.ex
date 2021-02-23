@@ -5,8 +5,9 @@ defmodule BullsWeb.GameChannel do
   alias Bulls.BackupAgent
 
   @impl true
-  def join("game:" <> name, _payload, socket) do
+  def join("game:" <> name, payload, socket) do
     game = BackupAgent.get(name) || Game.new
+    game = Game.user_joins(game, payload)
     socket = socket
     |> assign(:name, name)
     |> assign(:game, game)
@@ -34,11 +35,11 @@ defmodule BullsWeb.GameChannel do
   end
 
   @impl true
-  def handle_in("change role", %{user: user, role: role}, socket0) do
+  def handle_in("change role", %{"user" => user, "role" => role}, socket0) do
     game0 = socket0.assigns[:game]
     if game0.gamephase == "setup" do
       game1 = Game.change_role(game0, user, role)
-      # TODO add logic for checking all 'players' are ready
+      game1 = Game.all_ready(game1)
 
       socket1 = assign(socket0, :game, game1)
       BackupAgent.put(socket0.assigns[:name], game1)

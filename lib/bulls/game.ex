@@ -8,7 +8,7 @@ defmodule Bulls.Game do
       guesses: MapSet.new(),
       tempguesses: MapSet.new(),
       gamephase: "setup",
-      userstatus: MapSet.new(),
+      userstatus: Map.new(),
       roundtime: 30,
       lastwinners: [],
       userstats: MapSet.new()
@@ -49,9 +49,9 @@ defmodule Bulls.Game do
       %{
         gamephase: st.gamephase,
         lastwinners: st.lastwinners,
-        userstats: st.userstats
+        userstats: MapSet.to_list(st.userstats)
       }
-    else do
+    else
       %{
         gamephase: st.gamephase,
         guesses: MapSet.to_list(st.guesses),
@@ -81,16 +81,33 @@ defmodule Bulls.Game do
   # changes a users role into a chosen observer, readying, or ready player
   # assumes this is during setup phase
   def change_role(st, user, role) do
-    if role == "readyingplayer"
-    && {:ok, "observer"} == Map.fetch(st.userstatus, user) do
-      %{ st | userstatus: Map.put(st, user, role)
-    else if role == "readyplayer"
-    && {:ok, "readyingplayer"} == Map.fetch(st.userstatus, user) do
-      %{ st | userstatus: Map.put(st, user, role)
-    else if role == "observer" do
-      %{ st | userstatus: Map.put(st, user, role)
+    fetch = Map.fetch(st.userstatus, user)
+    if ((role == "readyingplayer" && {:ok, "observer"} == fetch)
+      || (role == "readyplayer" && {:ok, "readyingplayer"} == fetch)
+      || (role == "observer")) do
+      %{ st | userstatus: Map.put(st, user, role) }
     else
       st
     end
+  end
+
+  def all_ready(st) do
+    #IO.puts(inspect(MapSet.to_list(st.userstatus)))
+    Enum.each(st.userstatus, fn {_k, v} ->#check every value in the userstatus map
+      if (v == "readyingplayer") do#if any of the players are still getting ready...
+        %{ st | gamephase: "setup" }#you're still in the setup phase
+      end
+    end)
+    if(Enum.any?(st.userstatus, fn {_k, v} ->#if any of your players...
+      v == "readyplayer"#are ready...
+    end)) do
+      %{ st | gamephase: "playing" }#then the game can begin to play
+    else#otherwise...
+      %{ st | gamephase: "setup" }#you're still in the setup phase
+    end
+  end
+
+  def user_joins(st, name) do
+    %{ st | userstatus: Map.put(st.userstatus, name, "observer") }
   end
 end

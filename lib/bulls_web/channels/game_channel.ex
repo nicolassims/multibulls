@@ -32,4 +32,18 @@ defmodule BullsWeb.GameChannel do
     view = Game.view(game)
     {:reply, {:ok, view}, socket}
   end
+
+  @impl true
+  def handle_in("change role", %{user: user, role: role}, socket0) do
+    game0 = socket0.assigns[:game]
+    if game0.gamephase == "setup" do
+      game1 = Game.change_role(game0, user, role)
+      # TODO add logic for checking all 'players' are ready
+
+      socket1 = assign(socket0, :game, game1)
+      BackupAgent.put(socket0.assigns[:name], game1)
+      view = Game.view(game1)
+      {:reply, {:ok, view}, socket1}
+    end
+  end
 end

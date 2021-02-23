@@ -81,6 +81,8 @@ defmodule Bulls.Game do
   # changes a users role into a chosen observer, readying, or ready player
   # assumes this is during setup phase
   def change_role(st, user, role) do
+    IO.inspect("changing role")
+    IO.inspect(st.userstatus)
     fetch = Map.fetch(st.userstatus, user)
     if ((role == "readyingplayer" && {:ok, "observer"} == fetch)
       || (role == "readyplayer" && {:ok, "readyingplayer"} == fetch)
@@ -94,14 +96,11 @@ defmodule Bulls.Game do
   def all_ready(st) do
     IO.inspect("all_ready")
     IO.inspect(st.userstatus)
-    Enum.each(st.userstatus, fn {_k, v} ->#check every value in the userstatus map
-      if (v == "readyingplayer") do#if any of the players are still getting ready...
-        %{ st | gamephase: "setup" }#you're still in the setup phase
-      end
-    end)
     if(Enum.any?(st.userstatus, fn {_k, v} ->#if any of your players...
-      v == "readyplayer"#are ready...
-    end)) do
+        v == "readyplayer"#are ready...
+      end) && !Enum.any?(st.userstatus, fn {_k, v} ->
+        v == "readyingplayer"
+      end)) do
       %{ st | gamephase: "playing" }#then the game can begin to play
     else#otherwise...
       %{ st | gamephase: "setup" }#you're still in the setup phase

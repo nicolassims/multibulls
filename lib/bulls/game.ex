@@ -6,6 +6,12 @@ defmodule Bulls.Game do
     %{
       secret: random_secret(),
       guesses: MapSet.new(),
+      tempguesses: MapSet.new(),
+      gamephase: "setup",
+      userstatus: MapSet.new(),
+      roundtime: 30,
+      lastwinners: [],
+      userstats: MapSet.new()
     }
   end
 
@@ -39,9 +45,19 @@ defmodule Bulls.Game do
   end
 
   def view(st) do
-    %{
-      guesses: MapSet.to_list(st.guesses),
-    }
+    if st.gamephase == "setup" do
+      %{
+        gamephase: st.gamephase,
+        lastwinners: st.lastwinners,
+        userstats: st.userstats
+      }
+    else do
+      %{
+        gamephase: st.gamephase,
+        guesses: MapSet.to_list(st.guesses),
+        roundtime: st.roundtime
+      }
+    end
   end
 
   def assign_random(num) do
@@ -60,5 +76,21 @@ defmodule Bulls.Game do
     |> assign_random()
     |> assign_random()
     |> to_string()
+  end
+
+  # changes a users role into a chosen observer, readying, or ready player
+  # assumes this is during setup phase
+  def change_role(st, user, role) do
+    if role == "readyingplayer"
+    && {:ok, "observer"} == Map.fetch(st.userstatus, user) do
+      %{ st | userstatus: Map.put(st, user, role)
+    else if role == "readyplayer"
+    && {:ok, "readyingplayer"} == Map.fetch(st.userstatus, user) do
+      %{ st | userstatus: Map.put(st, user, role)
+    else if role == "observer" do
+      %{ st | userstatus: Map.put(st, user, role)
+    else
+      st
+    end
   end
 end

@@ -4,6 +4,8 @@ defmodule BullsWeb.GameChannel do
   alias Bulls.Game
   alias Bulls.BackupAgent
 
+  #TODO add calls to a GameServer module
+
   @impl true
   def join("game:" <> name, payload, socket) do
     game = BackupAgent.get(name) || Game.new
@@ -18,7 +20,7 @@ defmodule BullsWeb.GameChannel do
 
   @impl true
   def handle_in("guess", %{"num" => ll}, socket0) do
-    game0 = socket0.assigns[:game]
+    game0 = BackupAgent.get(socket0.assigns[:name]) || socket0.assigns[:game]
     game1 = Game.guess(game0, ll)
     socket1 = assign(socket0, :game, game1)
     BackupAgent.put(socket0.assigns[:name], game1)
@@ -36,7 +38,7 @@ defmodule BullsWeb.GameChannel do
 
   @impl true
   def handle_in("change role", %{"user" => user, "role" => role}, socket0) do
-    game0 = socket0.assigns[:game]
+    game0 = BackupAgent.get(socket0.assigns[:name]) || socket0.assigns[:game]
     if game0.gamephase == "setup" do
       game1 = Game.change_role(game0, user, role)
       game1 = Game.all_ready(game1)

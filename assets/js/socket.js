@@ -50,11 +50,13 @@ export function ch_push(guess) {
 }
 
 export function ch_reset() {
-  channel.push("reset", {})
+  channel.push("reset", username)
          .receive("ok", state_update)
          .receive("error", resp => {
            console.log("Unable to push", resp)
          });
+  state.gamephase = null;
+  channel.leave();
 }
 
 export function ch_changerole(role) {

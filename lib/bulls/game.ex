@@ -110,4 +110,8 @@ defmodule Bulls.Game do
   def user_joins(st, name) do
     %{ st | userstatus: Map.put(st.userstatus, name, "observer") }
   end
+
+  def remove_user(st, name) do
+    %{ st | userstatus: Map.pop!(st.userstatus, name) }
+  end
 end

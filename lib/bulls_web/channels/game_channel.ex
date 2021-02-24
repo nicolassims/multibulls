@@ -30,10 +30,11 @@ defmodule BullsWeb.GameChannel do
   end
 
   @impl true
-  def handle_in("reset", _, socket) do
-    game = Game.new
-    socket = assign(socket, :game, game)
-    view = Game.view(game)
+  def handle_in("reset", username, socket) do
+    game0 = BackupAgent.get(socket.assigns[:name]) || socket.assigns[:game]
+    socket = assign(socket, :game, game0)
+    view = Game.remove_user(game0, username)
+    view = Game.view(view)
     broadcast(socket, "view", view)
     {:reply, {:ok, view}, socket}
   end

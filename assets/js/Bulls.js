@@ -234,6 +234,8 @@ function Bulls() {
   }
 
   function reset() {
+    let newstate = Object.assign({}, state, {gamephase: null});
+    setState(newstate);
     ch_reset();
   }
 
@@ -267,6 +269,9 @@ function Bulls() {
 
   return (
     <div className="container">
+      <button onClick={reset}>
+        Log Out
+      </button>
       {body}
     </div>
   );

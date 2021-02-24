@@ -25,6 +25,7 @@ defmodule BullsWeb.GameChannel do
     socket1 = assign(socket0, :game, game1)
     BackupAgent.put(socket0.assigns[:name], game1)
     view = Game.view(game1)
+    broadcast(socket1, "view", view)
     {:reply, {:ok, view}, socket1}
   end
 
@@ -33,6 +34,7 @@ defmodule BullsWeb.GameChannel do
     game = Game.new
     socket = assign(socket, :game, game)
     view = Game.view(game)
+    broadcast(socket, "view", view)
     {:reply, {:ok, view}, socket}
   end
 
@@ -46,6 +48,7 @@ defmodule BullsWeb.GameChannel do
       socket1 = assign(socket0, :game, game1)
       BackupAgent.put(socket1.assigns[:name], game1)
       view = Game.view(game1)
+      broadcast(socket1, "view", view)
       {:reply, {:ok, view}, socket1}
     end
   end

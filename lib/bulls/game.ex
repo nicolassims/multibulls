@@ -137,10 +137,27 @@ defmodule Bulls.Game do
   end
 
   # updates user win/loss stats and lastwinners
-  @spec record_wins(any) :: any
   def record_wins(st) do
-    st
-    #TODO
+    #will become lastwinners
+    winnerlist = Enum.reduce(st.guesses, [], fn {k, v}, acc ->
+      if (Enum.any?(v, fn x -> String.contains?(x, "A4") end)) do
+        [k | acc]
+      else
+        acc
+      end
+    end)
+
+    #will become userstats
+    newuserstats = Enum.reduce(st.userstats, Map.new(), fn {k, v}, acc ->
+      if (Enum.member?(winnerlist, k)) do
+        Map.put(acc, k, {elem(v, 0) + 1, elem(v, 1) + 1})
+      else
+        Map.put(acc, k, {elem(v, 0), elem(v, 1) + 1})
+      end
+    end)
+
+    st = %{ st | lastwinners: winnerlist }
+    %{ st | userstats: newuserstats }
   end
 
   #reset to setup phase
@@ -151,7 +168,7 @@ defmodule Bulls.Game do
   end
 
   def user_joins(st, name) do
-    IO.inspect(st.userstatus)
+    st = %{ st | userstats: Map.put(st.userstats, name, {0, 0}) }
     %{ st | userstatus: Map.put(st.userstatus, name, "observer") }
   end
 

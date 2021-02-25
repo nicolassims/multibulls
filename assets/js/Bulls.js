@@ -197,17 +197,10 @@ function Controls({guess, reset}) {
             <button onClick={() => guess(text)}>Guess</button>
           </p>
         </div>
+      </div>
+      <div className="row">
         <div className="column">
-          <p>
-            -- Guesses --
-          </p>
-        </div>
-        <div className="column">
-          <p>
-            <button onClick={reset}>
-              Reset
-            </button>
-          </p>
+          <p>-- Guesses --</p>
         </div>
       </div>
     </div>
@@ -249,7 +242,7 @@ function Bulls() {
   } else {
     body = (
       <div>
-        <Controls reset={reset} guess={guess} />
+        <Controls guess={guess} />
         <div className="row">
           <div className="column">
             <p>{guesses}</p>

@@ -63,10 +63,8 @@ defmodule Bulls.GameServer do
     {:reply, Game.view(state1), state1}
   end
 
-  def handle_call({:guess, gamename, _user, _guess}, _from, state0) do
-    #TODO
-    state1 = state0
-
+  def handle_call({:guess, gamename, user, guess}, _from, state0) do
+    state1 = Game.user_guess(state0, user, guess)
     BackupAgent.put(gamename, state1)
     {:reply, Game.view(state1), state1}
   end

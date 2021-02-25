@@ -5,7 +5,7 @@ defmodule Bulls.Game do
   def new do
     %{
       secret: random_secret(),
-      guesses: MapSet.new(),
+      guesses: Map.new(),
       tempguesses: MapSet.new(),
       gamephase: "setup",
       userstatus: Map.new(),
@@ -28,7 +28,7 @@ defmodule Bulls.Game do
     end
   end
 
-  def guess(st, guess) do
+  def user_guess(st, user, guess) do
     if (is_binary(guess)#if the guess is binary...
       && String.length(guess) == 4#and if the guess is four characters long...
       && !(inspect(st.guesses) =~ guess)#and if the guess is not in the guess list...
@@ -38,7 +38,10 @@ defmodule Bulls.Game do
 
       fullGuess = inspect(guess) <> " -- A" <> inspect(matchedplaces) <> "B" <> inspect(matchednumbers)
 
-      %{ st | guesses: MapSet.put(st.guesses, fullGuess) }
+      case Map.fetch(st.guesses, user) do
+        {:ok, guesslist} -> %{ st | guesses: Map.put(st.guesses, user, [ fullGuess | guesslist]) }
+        :error -> %{ st | guesses: Map.put(st.guesses, user, [ fullGuess ]) }
+      end
     else
       st
     end
@@ -54,7 +57,7 @@ defmodule Bulls.Game do
     else
       %{
         gamephase: st.gamephase,
-        guesses: MapSet.to_list(st.guesses),
+        guesses: inspect(Map.to_list(st.guesses)),
         roundtime: st.roundtime
       }
     end
@@ -81,8 +84,6 @@ defmodule Bulls.Game do
   # changes a users role into a chosen observer, readying, or ready player
   # assumes this is during setup phase
   def change_role(st, user, role) do
-    IO.inspect("changing role")
-    IO.inspect(st.userstatus)
     fetch = Map.fetch(st.userstatus, user)
     if ((role == "readyingplayer" && {:ok, "observer"} == fetch)
       || (role == "readyplayer" && {:ok, "readyingplayer"} == fetch)
@@ -94,8 +95,6 @@ defmodule Bulls.Game do
   end
 
   def all_ready(st) do
-    IO.inspect("all_ready")
-    IO.inspect(st.userstatus)
     if(Enum.any?(st.userstatus, fn {_k, v} ->#if any of your players...
         v == "readyplayer"#are ready...
       end) && !Enum.any?(st.userstatus, fn {_k, v} ->

@@ -26,6 +26,7 @@ defmodule BullsWeb.GameChannel do
     GameServer.guess(game, user, ll)
 
     view = GameServer.view(game)
+    broadcast(socket, "view", view)
     {:reply, {:ok, view}, socket}
   end
 
@@ -39,12 +40,6 @@ defmodule BullsWeb.GameChannel do
     view = GameServer.user_leave(game, user)
 
     {:reply, {:ok, view}, socket}
-    #{:stop, {:shutdown, :left}, socket}
-
-    #game = Game.new
-    #socket = assign(socket, :game, game)
-    #view = Game.view(game)
-    #{:reply, {:ok, view}, socket}
   end
 
   @impl true
@@ -61,16 +56,5 @@ defmodule BullsWeb.GameChannel do
     else
       {:reply, {:error, "Change Denied"}, socket}
     end
-
-    #game0 = BackupAgent.get(socket0.assigns[:name]) || socket0.assigns[:game]
-    #if game0.gamephase == "setup" do
-    #  game1 = Game.change_role(game0, user, role)
-    #  game1 = Game.all_ready(game1)
-
-    #  socket1 = assign(socket0, :game, game1)
-    #  BackupAgent.put(socket1.assigns[:name], game1)
-    #  view = Game.view(game1)
-    #  {:reply, {:ok, view}, socket1}
-    #end
   end
 end

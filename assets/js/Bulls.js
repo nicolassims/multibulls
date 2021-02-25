@@ -123,7 +123,7 @@ function Setup() {
   );
 }
 
-function GameOver(props) {
+/*function GameOver(props) {
   let {reset} = props;
 
   return (
@@ -157,7 +157,7 @@ function YouWin(props) {
       </div>
     </div>
   );
-}
+}*/
 
 function Controls({guess, reset}) {
   const [text, setText] = useState("");
@@ -247,7 +247,16 @@ function Bulls() {
   } else if (gamephase == "setup") {
     body = <Setup />;
   } else {
-    body = <div>Game is playing!</div>
+    body = (
+      <div>
+        <Controls reset={reset} guess={guess} />
+        <div className="row">
+          <div className="column">
+            <p>{guesses}</p>
+          </div>
+        </div>  
+      </div>
+    )
   }
   
   /*if (guesses.join("").includes("A4")) {

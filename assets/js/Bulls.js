@@ -232,7 +232,7 @@ function Bulls() {
     ch_reset();
   }
 
-  function interpret(strguesses) {
+  function interpretguesses(strguesses) {
     strguesses = strguesses.split("}");
     let newmap = new Map();
     for (let i = 0; i < strguesses.length - 1; i++) {
@@ -253,7 +253,7 @@ function Bulls() {
       bodypart.push([
         <div key={mapkey} className="column">
           <p>{mapkey}</p>
-          <p>{data.join('\n').replace(/\\"/g, '')}</p>
+          <p>{data.join('\n').replace(/\\"|"/g, '')}</p>
         </div>
       ])
     }
@@ -281,7 +281,7 @@ function Bulls() {
       <div>
         <Controls guess={guess} />
         <div className="row">
-          {interpret(guesses)}
+          {interpretguesses(guesses)}
         </div>
       </div>
     );

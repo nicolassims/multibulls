@@ -20,8 +20,8 @@ defmodule BullsWeb.GameChannel do
 
   @impl true
   def handle_in("guess", %{"num" => ll}, socket) do
-    user = socket.assigns(:user)
-    game = socket.assigns(:name)
+    user = socket.assigns[:user]
+    game = socket.assigns[:name]
 
     GameServer.guess(game, user, ll)
 
@@ -33,8 +33,8 @@ defmodule BullsWeb.GameChannel do
   @impl true
   def handle_in("reset", _payload, socket) do
     IO.puts("Starting channel handler")
-    user = socket.assigns(:user)
-    game = socket.assigns(:name)
+    user = socket.assigns[:user]
+    game = socket.assigns[:name]
     IO.puts("About to remove user")
     view = GameServer.user_leave(game, user)
 
@@ -49,11 +49,12 @@ defmodule BullsWeb.GameChannel do
 
   @impl true
   def handle_in("change role", %{"role" => role}, socket) do
-    user = socket.assigns(:user)
-    game = socket.assigns(:name)
+    user = socket.assigns[:user]
+    game = socket.assigns[:name]
 
     changed = GameServer.change_role(game, user, role)
     view = GameServer.view(game)
+    broadcast(socket, "view", view)
 
     if changed do
       {:reply, {:ok, view}, socket}

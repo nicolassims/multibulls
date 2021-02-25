@@ -9,8 +9,8 @@ socket.connect();
 let state = {
   guesses: [],
   gamephase: null,
-  winners: [],
-  playerscores: new Map(),
+  lastwinners: [],
+  userstats: new Map(),
 };
 
 let username = null;

@@ -60,7 +60,7 @@ defmodule Bulls.Game do
       %{
         gamephase: st.gamephase,
         lastwinners: st.lastwinners,
-        userstats: Map.to_list(st.userstats)
+        userstats: st.userstats
       }
     else
       %{
@@ -150,9 +150,9 @@ defmodule Bulls.Game do
     #will become userstats
     newuserstats = Enum.reduce(st.userstats, Map.new(), fn {k, v}, acc ->
       if (Enum.member?(winnerlist, k)) do
-        Map.put(acc, k, {elem(v, 0) + 1, elem(v, 1) + 1})
+        Map.put(acc, k, [Enum.fetch!(v, 0) + 1, Enum.fetch!(v, 1)  + 1])
       else
-        Map.put(acc, k, {elem(v, 0), elem(v, 1) + 1})
+        Map.put(acc, k, [Enum.fetch!(v, 0), Enum.fetch!(v, 1) + 1])
       end
     end)
 
@@ -168,7 +168,7 @@ defmodule Bulls.Game do
   end
 
   def user_joins(st, name) do
-    st = %{ st | userstats: Map.put(st.userstats, name, {0, 0}) }
+    st = %{ st | userstats: Map.put(st.userstats, name, [0, 0]) }
     %{ st | userstatus: Map.put(st.userstatus, name, "observer") }
   end
 

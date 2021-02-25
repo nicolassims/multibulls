@@ -211,11 +211,11 @@ function Bulls() {
   const [state, setState] = useState({
     guesses: [],
     gamephase: null,
-    winners: [],
-    playerscores: new Map(),
+    lastwinners: [],
+    userstats: new Map(),
   });
 
-  let {guesses, gamephase, winners, playerscores} = state;
+  let {guesses, gamephase, lastwinners, userstats} = state;
 
   useEffect(() => {
     ch_join(setState);
@@ -265,11 +265,17 @@ function Bulls() {
 
   let body = null;
 
-  //console.log(state);
+  console.log(state);
   if (gamephase == null) {
     body = <Login />;
   } else if (gamephase == "setup") {
-    body = <Setup />;
+    body = (
+      <div>
+        <p>{lastwinners.toString()}</p>
+        <p>{Object.values(userstats).toString()}</p>
+        <Setup />
+      </div>
+    );
   } else {
     body = (
       <div>
@@ -278,7 +284,7 @@ function Bulls() {
           {interpret(guesses)}
         </div>
       </div>
-    )
+    );
   }
   
   /*if (guesses.join("").includes("A4")) {

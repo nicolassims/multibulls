@@ -263,6 +263,23 @@ function Bulls() {
     return bodypart;
   }
 
+  function interpretuserstats(usrstats) {
+    let bodypart = [];
+
+    function drawStats(data, mapkey, map) {
+      bodypart.push([
+        <div key={mapkey} className="column">
+          <p>{mapkey}: W{data[0]}/L{data[1] - data[0]}</p>
+        </div>
+      ]);
+    }
+
+    usrstats = new Map(Object.entries(usrstats));
+    usrstats.forEach(drawStats);
+
+    return bodypart;
+  }
+
   let body = null;
 
   console.log(state);
@@ -271,8 +288,14 @@ function Bulls() {
   } else if (gamephase == "setup") {
     body = (
       <div>
-        <p>{lastwinners.toString()}</p>
-        <p>{Object.values(userstats).toString()}</p>
+        <div className="row">
+          <div className="col">
+            Prior Winners: {lastwinners.toString()}
+          </div>
+        </div>
+        <div className="row">
+          {interpretuserstats(userstats)}
+        </div>
         <Setup />
       </div>
     );

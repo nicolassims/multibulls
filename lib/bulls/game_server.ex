@@ -73,16 +73,44 @@ defmodule Bulls.GameServer do
   end
 
   def handle_call({:change_role, gamename, user, role}, _from, state0) do
-    state1 = Game.change_role(state0, user, role)
-    state2 = Game.all_ready(state1)
-    BackupAgent.put(gamename, state2)
-    {:reply, Game.view(state2), state2}
+    if state0.gamephase == "setup" do
+      state1 = Game.change_role(state0, user, role)
+      state2 = Game.all_ready(state1)
+
+      if state2.gamephase == "playing" do
+        Process.send_after(self(), :update_clock, 1_000)
+        Process.send_after(self(), :end_round, 30_000)
+      end
+
+      BackupAgent.put(gamename, state2)
+      {:reply, Game.view(state2), state2}
+    else
+      {:reply, Game.view(state0), state0}
+    end
   end
 
   def handle_call({:view, gamename}, _from, state0) do
     view = Game.view(state0)
     BackupAgent.put(gamename, state0)
     {:reply, view, state0}
+  end
+
+  def handle_info(:end_round, state0) do
+    if Game.round_over?(state0) do
+      Process.send_after(self(), :end_round, 30_000)
+
+    else
+      {:noreply, state0}
+    end
+  end
+
+  def handle_info(:update_clock, state0) do
+    Process.send_after(self(), :update_clock, 1_000)
+    state1 = Game.tick(state0)
+    BullsWeb.Endpoint.broadcast()
+    Phoenix.Endpoint.broadcast()
+    broadcast(socket, "view", Game.view(state1))
+    {:noreply, state1}
   end
 
   def init(game) do

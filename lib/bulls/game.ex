@@ -6,12 +6,12 @@ defmodule Bulls.Game do
     %{
       secret: random_secret(),
       guesses: Map.new(),
-      tempguesses: MapSet.new(),
+      tempguesses: Map.new(),
       gamephase: "setup",
       userstatus: Map.new(),
       roundtime: 30,
       lastwinners: [],
-      userstats: MapSet.new()
+      userstats: Map.new()
     }
   end
 
@@ -40,10 +40,16 @@ defmodule Bulls.Game do
 
       fullGuess = inspect(guess) <> " -- A" <> inspect(matchedplaces) <> "B" <> inspect(matchednumbers)
 
-      case Map.fetch(st.guesses, user) do
+      stWithNewGuess = case Map.fetch(st.guesses, user) do
         {:ok, guesslist} -> %{ st | guesses: Map.put(st.guesses, user, [ fullGuess | guesslist]) }
         :error -> %{ st | guesses: Map.put(st.guesses, user, [ fullGuess ]) }
       end
+
+      check_win(stWithNewGuess)
+      #case Map.fetch(st.guesses, user) do
+      #  {:ok, guesslist} -> %{ st | guesses: Map.put(st.guesses, user, [ fullGuess | guesslist]) }
+      #  :error -> %{ st | guesses: Map.put(st.guesses, user, [ fullGuess ]) }
+      #end
     else
       st
     end
@@ -118,11 +124,23 @@ defmodule Bulls.Game do
     end
   end
 
-  # updates user win/loss stats
+  # TODO switch to tempguess, add check that all players have guessed
+  # or round time is over
+  def check_win(st) do
+    if st.gamephase == "playing"
+      && Enum.any?(Map.values(st.guesses),
+          fn [lastguess | _rest] -> String.contains?(lastguess, "A4B0") end) do
+      reset(record_wins(st)) # record the win and reset to setup
+    else
+      st
+    end
+  end
+
+  # updates user win/loss stats and lastwinners
   @spec record_wins(any) :: any
   def record_wins(st) do
-    #TODO implement
     st
+    #TODO
   end
 
   #reset to setup phase

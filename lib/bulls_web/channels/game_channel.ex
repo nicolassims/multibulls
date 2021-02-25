@@ -31,13 +31,15 @@ defmodule BullsWeb.GameChannel do
 
   # User wants to reset to login page
   @impl true
-  def handle_in("reset", _, socket) do
+  def handle_in("reset", _payload, socket) do
+    IO.puts("Starting channel handler")
     user = socket.assigns(:user)
     game = socket.assigns(:name)
+    IO.puts("About to remove user")
+    view = GameServer.user_leave(game, user)
 
-    GameServer.user_leave(game, user)
-
-    {:stop, {:shutdown, :left}, socket}
+    {:reply, {:ok, view}, socket}
+    #{:stop, {:shutdown, :left}, socket}
 
     #game = Game.new
     #socket = assign(socket, :game, game)

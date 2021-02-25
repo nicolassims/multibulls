@@ -11,6 +11,7 @@ defmodule Bulls.GameSup do
 
   @impl true
   def init(_arg) do
+    IO.puts("Starting superviesor")
     {:ok, _} = Registry.start_link(
       keys: :unique,
       name: Bulls.GameReg,
@@ -21,6 +22,7 @@ defmodule Bulls.GameSup do
 
   @spec start_child(any) :: :ignore | {:error, any} | {:ok, pid}
   def start_child(spec) do
-    DynamicSupervisor.start_link(__MODULE__, spec)
+    IO.puts("Starting child")
+    DynamicSupervisor.start_child(__MODULE__, spec)
   end
 end

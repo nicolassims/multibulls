@@ -7,10 +7,12 @@ defmodule Bulls.GameServer do
   # Interface
 
   def reg(gamename) do
+    IO.puts("Registering gamename")
     {:via, Registry, {Bulls.GameReg, gamename}}
   end
 
   def start(gamename) do
+    IO.puts("Starting gameserver")
     spec = %{
       id: __MODULE__,
       start: {__MODULE__, :start_link, [gamename]},
@@ -21,6 +23,7 @@ defmodule Bulls.GameServer do
   end
 
   def start_link(gamename) do
+    IO.puts("Starting gameserver 2")
     game = BackupAgent.get(gamename) || Game.new
     GenServer.start_link(
       __MODULE__,
@@ -30,10 +33,12 @@ defmodule Bulls.GameServer do
   end
 
   def user_join(gamename, user) do
+    IO.puts("Starting userjoin")
     GenServer.call(reg(gamename), {:user_join, gamename, user})
   end
 
   def user_leave(gamename, user) do
+    IO.puts("Calling remove user")
     GenServer.call(reg(gamename), {:user_leave, gamename, user})
   end
 
@@ -58,6 +63,7 @@ defmodule Bulls.GameServer do
   end
 
   def handle_call({:user_leave, gamename, user}, _from, state0) do
+    IO.puts("Removing user")
     state1 = Game.remove_user(state0, user)
     BackupAgent.put(gamename, state1)
     {:reply, Game.view(state1), state1}

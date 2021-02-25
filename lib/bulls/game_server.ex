@@ -59,8 +59,11 @@ defmodule Bulls.GameServer do
 
   def handle_call({:user_leave, gamename, user}, _from, state0) do
     state1 = Game.remove_user(state0, user)
-    BackupAgent.put(gamename, state1)
-    {:reply, Game.view(state1), state1}
+
+    state2 = Game.game_stuck(state1)
+
+    BackupAgent.put(gamename, state2)
+    {:reply, Game.view(state2), state2}
   end
 
   def handle_call({:guess, gamename, user, guess}, _from, state0) do

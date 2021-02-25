@@ -106,11 +106,36 @@ defmodule Bulls.Game do
     end
   end
 
+  # if there are no active players in 'playing' phase
+  def game_stuck(st) do
+    if st.gamephase == "playing"
+    && !Enum.any?(st.userstatus, fn {_k, v} -> v == "readyplayer" end) do
+      reset(st)
+    else
+      st
+    end
+  end
+
+  # updates user win/loss stats
+  @spec record_wins(any) :: any
+  def record_wins(st) do
+    #TODO implement
+    st
+  end
+
+  #reset to setup phase
+  def reset(st) do
+    %{ st | gamephase: "setup",
+              secret: random_secret(),
+              guesses: Map.new()}
+  end
+
   def user_joins(st, name) do
+    IO.inspect(st.userstatus)
     %{ st | userstatus: Map.put(st.userstatus, name, "observer") }
   end
 
   def remove_user(st, name) do
-    %{ st | userstatus: Map.pop!(st.userstatus, name) }
+    %{ st | userstatus: elem(Map.pop!(st.userstatus, name), 1) }
   end
 end

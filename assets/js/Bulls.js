@@ -197,6 +197,11 @@ function Controls({guess, reset}) {
             <button onClick={() => guess(text)}>Guess</button>
           </p>
         </div>
+        <div className="column">
+          <p>
+            <button onClick={() => guess("pass")}>Pass</button>
+          </p>
+        </div>
       </div>
       <div className="row">
         <div className="column">

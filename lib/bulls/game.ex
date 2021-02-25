@@ -29,30 +29,31 @@ defmodule Bulls.Game do
   end
 
   def user_guess(st, user, guess) do
-    if (st.gamephase == "playing" # if game is in playing phase
-      && Map.fetch!(st.userstatus, user) == "readyplayer" # user is playing
-      && is_binary(guess)#if the guess is binary...
-      && String.length(guess) == 4#and if the guess is four characters long...
-      && !(inspect(st.guesses) =~ guess)#and if the guess is not in the guess list...
-      && !String.match?(guess, ~r/^0|(?:([0-9])(.*\1))|\D/)) do#and if the guess has only unique digits, and doesn't begin with 0...
+    if (guess != "pass") do
+      if (st.gamephase == "playing" # if game is in playing phase
+        && Map.fetch!(st.userstatus, user) == "readyplayer" # user is playing
+        && is_binary(guess)#if the guess is binary...
+        && String.length(guess) == 4#and if the guess is four characters long...
+        && !(inspect(st.guesses) =~ guess)#and if the guess is not in the guess list...
+        && !String.match?(guess, ~r/^0|(?:([0-9])(.*\1))|\D/)) do#and if the guess has only unique digits, and doesn't begin with 0...
 
-      [matchedplaces, matchednumbers] = calculateAB(guess, st.secret, 0, 0, 0)
+        [matchedplaces, matchednumbers] = calculateAB(guess, st.secret, 0, 0, 0)
 
-      fullGuess = inspect(guess) <> " -- A" <> inspect(matchedplaces) <> "B" <> inspect(matchednumbers)
+        fullGuess = inspect(guess) <> " -- A" <> inspect(matchedplaces) <> "B" <> inspect(matchednumbers)
 
-      stWithNewGuess = case Map.fetch(st.guesses, user) do
-        {:ok, guesslist} -> %{ st | guesses: Map.put(st.guesses, user, [ fullGuess | guesslist]) }
-        :error -> %{ st | guesses: Map.put(st.guesses, user, [ fullGuess ]) }
+        stWithNewGuess = case Map.fetch(st.guesses, user) do
+          {:ok, guesslist} -> %{ st | guesses: Map.put(st.guesses, user, [ fullGuess | guesslist]) }
+          :error -> %{ st | guesses: Map.put(st.guesses, user, [ fullGuess ]) }
+        end
+
+        check_win(stWithNewGuess)
+        #case Map.fetch(st.guesses, user) do
+        #  {:ok, guesslist} -> %{ st | guesses: Map.put(st.guesses, user, [ fullGuess | guesslist]) }
+        #  :error -> %{ st | guesses: Map.put(st.guesses, user, [ fullGuess ]) }
+        #end
       end
-
-      check_win(stWithNewGuess)
-      #case Map.fetch(st.guesses, user) do
-      #  {:ok, guesslist} -> %{ st | guesses: Map.put(st.guesses, user, [ fullGuess | guesslist]) }
-      #  :error -> %{ st | guesses: Map.put(st.guesses, user, [ fullGuess ]) }
-      #end
-    else
-      st
     end
+    st
   end
 
   def view(st) do

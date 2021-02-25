@@ -60,7 +60,7 @@ defmodule Bulls.Game do
       %{
         gamephase: st.gamephase,
         lastwinners: st.lastwinners,
-        userstats: MapSet.to_list(st.userstats)
+        userstats: Map.to_list(st.userstats)
       }
     else
       %{

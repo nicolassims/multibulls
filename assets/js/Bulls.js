@@ -232,9 +232,40 @@ function Bulls() {
     ch_reset();
   }
 
+  function interpret(strguesses) {
+    strguesses = strguesses.split("}");
+    let newmap = new Map();
+    for (let i = 0; i < strguesses.length - 1; i++) {
+      console.log(strguesses[i]);
+      let bracepos = strguesses[i].indexOf("{\"") + 2;
+      let spacepos = strguesses[i].indexOf("\", ");
+      let key = strguesses[i].substring(bracepos, spacepos);
+
+      let openpos = strguesses[i].indexOf('["') + 2;
+      let closepos = strguesses[i].indexOf("]") - 1;
+      let data = strguesses[i].substring(openpos, closepos).split(",");
+      newmap.set(key, data);
+    }
+
+    let bodypart = [];
+
+    function drawGuesses(data, mapkey, map) {
+      bodypart.push([
+        <div key={mapkey} className="column">
+          <p>{mapkey}</p>
+          <p>{data.join('\n').replace(/\\"/g, '')}</p>
+        </div>
+      ])
+    }
+
+    newmap.forEach(drawGuesses);
+
+    return bodypart;
+  }
+
   let body = null;
 
-  console.log(state);
+  //console.log(state);
   if (gamephase == null) {
     body = <Login />;
   } else if (gamephase == "setup") {
@@ -244,10 +275,8 @@ function Bulls() {
       <div>
         <Controls guess={guess} />
         <div className="row">
-          <div className="column">
-            <p>{guesses}</p>
-          </div>
-        </div>  
+          {interpret(guesses)}
+        </div>
       </div>
     )
   }

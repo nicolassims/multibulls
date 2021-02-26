@@ -123,49 +123,10 @@ function Setup() {
   );
 }
 
-/*function GameOver(props) {
-  let {reset} = props;
-
-  return (
-    <div className="row">
-      <SetTitle text="Game Over!" />
-      <div className="column">
-        <h1>Game Over!</h1>
-        <p>
-          <button onClick={reset}>
-            Reset
-          </button>
-        </p>
-      </div>
-    </div>
-  );
-}
-
-function YouWin(props) {
-  let {reset} = props;
-
-  return (
-    <div className="row">
-      <SetTitle text="You win!" />
-      <div className="column">
-        <h1>You win!</h1>
-        <p>
-          <button onClick={reset}>
-            Reset
-          </button>
-        </p>
-      </div>
-    </div>
-  );
-}*/
-
-function Controls({guess, reset}) {
+function Controls({guess, _reset}) {
   const [text, setText] = useState("");
 
   function updateText(ev) {
-    //does this count as game logic being browser-side?
-    //I don't think so. This is what professor Tuck did
-    //on his Hangman game, roughly
     let vv = ev.target.value;
     if (vv.length > 4) {
       vv = vv.substring(0, 4);
@@ -242,7 +203,6 @@ function Bulls() {
     strguesses = strguesses.split("}");
     let newmap = new Map();
     for (let i = 0; i < strguesses.length - 1; i++) {
-      console.log(strguesses[i]);
       let bracepos = strguesses[i].indexOf("{\"") + 2;
       let spacepos = strguesses[i].indexOf("\", ");
       let key = strguesses[i].substring(bracepos, spacepos);
@@ -288,10 +248,6 @@ function Bulls() {
 
   let body = null;
 
-  function fetchTime() {
-    ch_ping();
-  }
-
   console.log(state);
   if (gamephase == null) {
     body = <Login />;
@@ -320,23 +276,6 @@ function Bulls() {
       </div>
     );
   }
-  
-  /*if (guesses.join("").includes("A4")) {
-    body = <YouWin reset={reset} />;
-  } else if (guesses.length < 8) {
-    body = (
-      <div>
-        <Controls reset={reset} guess={guess} />
-        <div className="row">
-          <div className="column">
-            <p>{guesses.join('\n')}</p>
-          </div>
-        </div>  
-      </div>
-    )
-  } else {
-    body = <GameOver reset={reset} />;
-  }*/
 
   return (
     <div className="container">

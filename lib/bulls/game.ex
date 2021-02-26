@@ -144,9 +144,7 @@ defmodule Bulls.Game do
   # or round time is over
   def check_win(st) do
     cond do
-      st.gamephase == "playing"
-      && all_guessed?(st)
-      && secret_guessed?(st)
+      all_guessed?(st) && secret_guessed?(st)
         -> reset(record_wins(st))# record the win and reset to setup
       all_guessed?(st)
         -> end_round(st)

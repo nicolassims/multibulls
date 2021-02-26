@@ -166,10 +166,13 @@ defmodule Bulls.Game do
 
     #will become userstats
     newuserstats = Enum.reduce(st.userstats, Map.new(), fn {k, v}, acc ->
-      if (Enum.member?(winnerlist, k)) do
-        Map.put(acc, k, [Enum.fetch!(v, 0) + 1, Enum.fetch!(v, 1)  + 1])
-      else
-        Map.put(acc, k, [Enum.fetch!(v, 0), Enum.fetch!(v, 1) + 1])
+      cond do
+        Enum.member?(winnerlist, k)
+          -> Map.put(acc, k, [Enum.fetch!(v, 0) + 1, Enum.fetch!(v, 1)  + 1])
+        Map.fetch!(st.userstatus, k) == "observer"
+          -> Map.put(acc, k, v)
+        true
+          -> Map.put(acc, k, [Enum.fetch!(v, 0), Enum.fetch!(v, 1) + 1])
       end
     end)
 

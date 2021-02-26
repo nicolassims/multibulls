@@ -33,10 +33,8 @@ defmodule BullsWeb.GameChannel do
   # User wants to reset to login page
   @impl true
   def handle_in("reset", _payload, socket) do
-    IO.puts("Starting channel handler")
     user = socket.assigns[:user]
     game = socket.assigns[:name]
-    IO.puts("About to remove user")
     view = GameServer.user_leave(game, user)
 
     {:reply, {:ok, view}, socket}
@@ -56,5 +54,13 @@ defmodule BullsWeb.GameChannel do
     else
       {:reply, {:error, "Change Denied"}, socket}
     end
+  end
+
+  @impl true
+  def handle_in("ping", _payload, socket) do
+    game = socket.assigns[:name]
+    view = GameServer.view(game)
+    broadcast(socket, "view", view)
+    {:reply, {:ok, view}, socket}
   end
 end

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import 'milligram';
 
-import { ch_changerole, ch_login, ch_join, ch_push, ch_reset } from './socket';
+import { ch_ping, ch_changerole, ch_login, ch_join, ch_push, ch_reset } from './socket';
 
 function SetTitle({text}) {
   useEffect(() => {
@@ -218,9 +218,10 @@ function Bulls() {
     gamephase: null,
     lastwinners: [],
     userstats: new Map(),
+    roundtime: 30
   });
 
-  let {guesses, gamephase, lastwinners, userstats} = state;
+  let {guesses, gamephase, lastwinners, userstats, roundtime} = state;
 
   useEffect(() => {
     ch_join(setState);
@@ -287,6 +288,10 @@ function Bulls() {
 
   let body = null;
 
+  function fetchTime() {
+    ch_ping();
+  }
+
   console.log(state);
   if (gamephase == null) {
     body = <Login />;
@@ -305,8 +310,10 @@ function Bulls() {
       </div>
     );
   } else {
+    window.setInterval(fetchTime, 1000);
     body = (
       <div>
+        {roundtime} seconds left!
         <Controls guess={guess} />
         <div className="row">
           {interpretguesses(guesses)}

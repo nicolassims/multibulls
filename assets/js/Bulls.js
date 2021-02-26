@@ -300,7 +300,7 @@ function Bulls() {
       <div>
         <div className="row">
           <div className="col">
-            Prior Winners: {lastwinners.toString()}
+            Prior Winners: {lastwinners.join(", ")}
           </div>
         </div>
         <div className="row">
@@ -310,7 +310,6 @@ function Bulls() {
       </div>
     );
   } else {
-    //window.setInterval(fetchTime, 1000);
     body = (
       <div>
         {roundtime} seconds left!

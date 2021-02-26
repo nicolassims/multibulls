@@ -123,12 +123,28 @@ defmodule Bulls.Game do
     end
   end
 
+  def all_guessed?(st) do
+    !Enum.any?(st.userstatus,
+      fn {k, v}
+        -> v == "readyplayer"
+          && case Map.fetch(st.tempguesses, k) do
+                {:ok, _guess} -> false
+                :error -> true
+          end
+      end)
+  end
+
+  def secret_guessed?(st) do
+    Enum.any?(Map.values(st.guesses),
+          fn [lastguess | _rest] -> String.contains?(lastguess, "A4") end)
+  end
+
   # TODO switch to tempguess, add check that all players have guessed
   # or round time is over
   def check_win(st) do
     if st.gamephase == "playing"
-      && Enum.any?(Map.values(st.guesses),
-          fn [lastguess | _rest] -> String.contains?(lastguess, "A4B0") end) do
+      && all_guessed?(st)
+      && secret_guessed?(st) do
       reset(record_wins(st)) # record the win and reset to setup
     else
       st
@@ -162,8 +178,10 @@ defmodule Bulls.Game do
   #reset to setup phase
   def reset(st) do
     %{ st | gamephase: "setup",
-              secret: random_secret(),
-              guesses: Map.new()}
+            secret: random_secret(),
+            guesses: Map.new(),
+            tempguesses: Map.new(),
+            roundtime: 30}
   end
 
   def user_joins(st, name) do
@@ -173,5 +191,48 @@ defmodule Bulls.Game do
 
   def remove_user(st, name) do
     %{ st | userstatus: elem(Map.pop!(st.userstatus, name), 1) }
+  end
+
+  def tick(st) do
+    %{ st | roundtime: max(0, st.roundtime - 1)}
+  end
+
+  def round_over?(st) do
+    st.roundtime == 0
+  end
+
+  def end_round(st) do
+    st = if (all_guessed?(st)) do
+            st
+          else
+            auto_pass(st)
+          end
+    if secret_guessed?(st) do
+      check_win(st)
+    else
+      %{ st | roundtime: 30,
+        tempguesses: Map.new(),
+        guesses: Enum.map(st.tempguesses,
+          fn {k, v} -> {k, v ++
+                        case Enum.fetch(st.guesses, k) do
+                          {:ok, guesslist} -> guesslist
+                          :error -> []
+                        end}
+          end)}
+    end
+  end
+
+  def auto_pass(st) do
+    players = Enum.filter(st.userstatus,
+      fn {_k, v} -> v == "readyplayer" end)
+    newTempguesses = Enum.reduce(players,
+      st.tempguesses,
+      fn {k, _v}, acc
+        -> case Enum.fetch(acc, k) do
+          {:ok, _guess} -> acc
+          :error -> Map.put(acc, k, "pass")
+        end
+      end)
+    %{ st | tempguesses: newTempguesses}
   end
 end

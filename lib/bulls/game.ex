@@ -173,8 +173,14 @@ defmodule Bulls.Game do
       end
     end)
 
-    st = %{ st | lastwinners: winnerlist }
-    %{ st | userstats: newuserstats }
+    #will become userstatus
+    newuserstatus = Enum.reduce(st.status, Map.new(), fn {k, _v}, acc ->
+      Map.put(acc, k, "observer")
+    end)
+
+    %{ st | lastwinners: winnerlist,
+            userstats: newuserstats,
+            userstatus: newuserstatus }
   end
 
   #reset to setup phase
@@ -207,14 +213,6 @@ defmodule Bulls.Game do
   end
 
   def end_round(st) do
-    st = if (all_guessed?(st)) do
-            IO.puts("All players guessed.")
-            st
-          else
-            IO.puts("Not all players guessed.")
-            st
-            #auto_pass(st)
-          end
     if secret_guessed?(st) do
       check_win(st)
     else

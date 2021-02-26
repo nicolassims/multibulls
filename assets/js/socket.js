@@ -30,7 +30,6 @@ export function ch_login(usergame) {
   username = usergame.username;
   channel = socket.channel("game:" + usergame.gamename, username);
   channel.on("view", state_update);
-  console.log("Joining channel");
   channel.join()
         .receive("ok", state_update)
         .receive("error", resp => {

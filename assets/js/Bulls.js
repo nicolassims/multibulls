@@ -18,21 +18,36 @@ function SetTitle({text}) {
 }
 
 function Login() {
+  /*Game names and user names must be 
+    composed exclusively of letters.
+    This is a controlled input.*/
   const [usergame, setUsergame] = useState(
     {username: "",
     gamename: ""}
   );
 
   function updateUsername(ev) {
+    let vv = ev.target.value;
+
+    if (!/^[a-zA-Z]+$/.test(vv)) {
+      vv = vv.substring(0, vv.length - 1);
+    }
+
     setUsergame({
-      username: ev.target.value, 
+      username: vv, 
       gamename: usergame.gamename});
   };
 
   function updateGamename(ev) {
+    let vv = ev.target.value;
+
+    if (!/^[a-zA-Z]+$/.test(vv)) {
+      vv = vv.substring(0, vv.length - 1);
+    }
+   
     setUsergame({
       username: usergame.username, 
-      gamename: ev.target.value});
+      gamename: vv});
   };
 
   return (
@@ -53,9 +68,11 @@ function Login() {
         </div>
       </div>
       <div className="row">
-        <button onClick={() => {ch_login(usergame)}}>
-          Login
-        </button>
+        <div className="column">
+          <button onClick={() => {ch_login(usergame)}}>
+            Login
+          </button>
+        </div>
       </div>
     </div>
   );
@@ -72,9 +89,11 @@ function Setup() {
   function Observer() {
     if (role != "observer") {
       return (
-        <button onClick={() => changeRole("observer")}>
-            Become Observer
-        </button>
+        <div className="column">
+          <button onClick={() => changeRole("observer")}>
+              Become Observer
+          </button>
+        </div>
       )
     } else {
       return null;
@@ -84,9 +103,11 @@ function Setup() {
   function ReadyPlayer() {
     if (role == "readyingplayer") {
       return (
-        <button onClick={() => changeRole("readyplayer")}>
-          Become Ready Player
-        </button>
+        <div className="column">
+          <button onClick={() => changeRole("readyplayer")}>
+            Become Ready Player
+          </button>
+        </div>
       )
     } else {
       return null;
@@ -96,9 +117,11 @@ function Setup() {
   function ReadyingPlayer() {
     if (role != "readyingplayer") {
       return (
-        <button onClick={() => changeRole("readyingplayer")}>
-          Become Readying Player
-        </button>
+        <div className="column">
+          <button onClick={() => changeRole("readyingplayer")}>
+            Become Readying Player
+          </button>
+        </div>
       )
     } else {
       return null;
@@ -109,15 +132,9 @@ function Setup() {
     <div>
       <div className="row">
         <SetTitle text="Selecting Role" />
-        <div className="column">
-          <Observer />
-        </div>
-        <div className="column">
-          <ReadyPlayer />
-        </div>
-        <div className="column">
-          <ReadyingPlayer />
-        </div>
+        <Observer />
+        <ReadyPlayer />
+        <ReadyingPlayer />
       </div>
     </div>
   );
@@ -155,18 +172,16 @@ function Controls({guess, _reset}) {
       <div className="row">
         <div className="column">
           <p>
-            <button onClick={() => guess(text)}>Guess</button>
+            <button onClick={() => { guess(text); setText("")}}>Guess</button>
           </p>
+        </div>
+        <div className="column">
+          <p>-- Guesses --</p>
         </div>
         <div className="column">
           <p>
             <button onClick={() => guess("pass")}>Pass</button>
           </p>
-        </div>
-      </div>
-      <div className="row">
-        <div className="column">
-          <p>-- Guesses --</p>
         </div>
       </div>
     </div>

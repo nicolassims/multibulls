@@ -44,8 +44,8 @@ defmodule Bulls.Game do
       fullGuess = inspect(guess) <> " -- A" <> inspect(matchedplaces) <> "B" <> inspect(matchednumbers)
 
       stWithNewGuess = case Map.fetch(st.guesses, user) do
-        {:ok, guesslist} -> %{ st | guesses: Map.put(st.guesses, user, [ fullGuess | guesslist]) }
-        :error -> %{ st | guesses: Map.put(st.guesses, user, [ fullGuess ]) }
+        {:ok, guesslist} -> st
+        :error -> %{ st | tempguesses: Map.put(st.guesses, user, [fullGuess]) }
       end
 
       check_win(stWithNewGuess)
@@ -212,13 +212,10 @@ defmodule Bulls.Game do
     else
       %{ st | roundtime: 30,
         tempguesses: Map.new(),
-        guesses: Enum.map(st.tempguesses,
-          fn {k, v} -> {k, v ++
-                        case Enum.fetch(st.guesses, k) do
-                          {:ok, guesslist} -> guesslist
-                          :error -> []
-                        end}
-          end)}
+        guesses: Enum.reduce(st.tempguesses,
+          st.guesses,
+          fn {k, v}, acc -> Map.put(acc, k, v) end)
+        }
     end
   end
 
@@ -228,7 +225,7 @@ defmodule Bulls.Game do
     newTempguesses = Enum.reduce(players,
       st.tempguesses,
       fn {k, _v}, acc
-        -> case Enum.fetch(acc, k) do
+        -> case Map.fetch(acc, k) do
           {:ok, _guess} -> acc
           :error -> Map.put(acc, k, "pass")
         end

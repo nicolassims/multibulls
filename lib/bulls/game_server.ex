@@ -56,6 +56,7 @@ defmodule Bulls.GameServer do
   def handle_call({:user_join, gamename, user}, _from, state0) do
     state1 = Game.user_joins(state0, user)
     BackupAgent.put(gamename, state1)
+    BullsWeb.Endpoint.broadcast(state1.gamename, "view", Game.view(state1))
     {:reply, Game.view(state1), state1}
   end
 

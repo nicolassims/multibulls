@@ -46,7 +46,7 @@ defmodule Bulls.Game do
 
       stWithNewGuess = case Map.fetch(st.tempguesses, user) do
         {:ok, _guesslist} -> st
-        :error -> %{ st | tempguesses: Map.put(st.tempguesses, user, [fullGuess]) }
+        :error -> %{ st | tempguesses: Map.put(st.tempguesses, user, fullGuess) }
       end
 
       check_win(stWithNewGuess)
@@ -143,12 +143,15 @@ defmodule Bulls.Game do
   # TODO switch to tempguess, add check that all players have guessed
   # or round time is over
   def check_win(st) do
-    if st.gamephase == "playing"
+    cond do
+      st.gamephase == "playing"
       && all_guessed?(st)
-      && secret_guessed?(st) do
-      reset(record_wins(st)) # record the win and reset to setup
-    else
-      st
+      && secret_guessed?(st)
+        -> reset(record_wins(st))# record the win and reset to setup
+      all_guessed?(st)
+        -> end_round(st)
+      true
+        -> st
     end
   end
 

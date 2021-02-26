@@ -3,6 +3,8 @@ import 'milligram';
 
 import { ch_ping, ch_changerole, ch_login, ch_join, ch_push, ch_reset } from './socket';
 
+window.setInterval(ch_ping, 1000);
+
 function SetTitle({text}) {
   useEffect(() => {
     let orig = document.title;
@@ -242,7 +244,6 @@ function Bulls() {
     strguesses = strguesses.split("}");
     let newmap = new Map();
     for (let i = 0; i < strguesses.length - 1; i++) {
-      console.log(strguesses[i]);
       let bracepos = strguesses[i].indexOf("{\"") + 2;
       let spacepos = strguesses[i].indexOf("\", ");
       let key = strguesses[i].substring(bracepos, spacepos);
@@ -288,11 +289,18 @@ function Bulls() {
 
   let body = null;
 
-  function fetchTime() {
-    ch_ping();
+  function once(fn, context) {
+    var result;
+    return function() {
+      if (fn) {
+        result = fn.apply(context || this, arguments);
+        fn = null
+      }
+      return result;
+    };
   }
 
-  console.log(state);
+  //console.log(state);
   if (gamephase == null) {
     body = <Login />;
   } else if (gamephase == "setup") {
@@ -310,7 +318,6 @@ function Bulls() {
       </div>
     );
   } else {
-    window.setInterval(fetchTime, 1000);
     body = (
       <div>
         {roundtime} seconds left!

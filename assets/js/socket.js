@@ -40,6 +40,7 @@ export function ch_login(usergame) {
 }
 
 export function ch_join(cb) {
+
   callback = cb;
   callback(state);
 }
@@ -74,9 +75,11 @@ export function ch_changerole(role) {
 }
 
 export function ch_ping() {
-  channel.push("ping", {})
+  if (channel != null) {
+    channel.push("ping", {})
          .receive("ok", state_update)
          .receive("error", resp => {
            console.log("Unable to push", resp)
          });
+  }
 }

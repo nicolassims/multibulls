@@ -20,6 +20,7 @@ let callback = null;
 
 // The server sent us a new state.
 function state_update(st) {
+  console.log(st)
   state = st;
   if (callback) {
     callback(st);

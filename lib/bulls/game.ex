@@ -45,7 +45,7 @@ defmodule Bulls.Game do
 
       stWithNewGuess = case Map.fetch(st.tempguesses, user) do
         {:ok, guesslist} -> st
-        :error -> %{ st | tempguesses: Map.put(st.tempguesses, user, [fullGuess]) }
+        :error -> %{ st | tempguesses: Map.put(st.tempguesses, user, fullGuess) }
       end
 
       check_win(stWithNewGuess)
@@ -207,7 +207,8 @@ defmodule Bulls.Game do
             st
           else
             IO.puts("Not all players guessed.")
-            auto_pass(st)
+            st
+            #auto_pass(st)
           end
     if secret_guessed?(st) do
       check_win(st)

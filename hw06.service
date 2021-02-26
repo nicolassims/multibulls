@@ -1,18 +1,18 @@
 [Unit]
-Description=HW05 Bulls
+Description=HW06 Multibulls
 
 [Service]
 Type=simple
-User=hw05
-Group=hw05
+User=hw06
+Group=hw06
 Restart=on-failure
 Environment=MIX_ENV=prod
-Environment=PORT=4780
+Environment=PORT=4800
 Environment=PROD=true
 Environment=LANG=en_US.UTF-8
 
-WorkingDirectory=/home/hw05/bulls
-ExecStart=/bin/bash /home/hw05/bulls/start.sh
+WorkingDirectory=/home/hw06/multibulls
+ExecStart=/bin/bash /home/hw06/multibulls/start.sh
 
 [Install]
 WantedBy=multi-user.target

@@ -187,7 +187,10 @@ defmodule Bulls.Game do
   end
 
   def user_joins(st, name) do
-    st = %{ st | userstats: Map.put(st.userstats, name, [0, 0]) }
+    st = case Map.fetch(st.userstats, name) do
+      {:ok, _val} -> st
+      :error -> %{ st | userstats: Map.put(st.userstats, name, [0, 0]) }
+    end
     %{ st | userstatus: Map.put(st.userstatus, name, "observer") }
   end
 

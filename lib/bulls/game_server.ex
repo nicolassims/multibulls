@@ -99,8 +99,10 @@ defmodule Bulls.GameServer do
 
   def handle_info(:end_round, state0) do
     if Game.round_over?(state0) do
-      Process.send_after(self(), :end_round, 30_000)
       state1 = Game.end_round(state0)
+      if state1.gamephase == "playing" do
+        Process.send_after(self(), :end_round, 30_000)
+      end
       BullsWeb.Endpoint.broadcast(state1.gamename, "view", Game.view(state1))
       {:noreply, state1}
     else

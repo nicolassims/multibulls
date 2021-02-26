@@ -108,7 +108,7 @@ defmodule Bulls.Game do
       end) && !Enum.any?(st.userstatus, fn {_k, v} ->
         v == "readyingplayer"
       end)) do
-      %{ st | gamephase: "playing" }#then the game can begin to play
+      %{ st | gamephase: "playing", roundtime: 30 }#then the game can begin to play
     else#otherwise...
       %{ st | gamephase: "setup" }#you're still in the setup phase
     end
@@ -174,7 +174,7 @@ defmodule Bulls.Game do
     end)
 
     #will become userstatus
-    newuserstatus = Enum.reduce(st.status, Map.new(), fn {k, _v}, acc ->
+    newuserstatus = Enum.reduce(st.userstatus, Map.new(), fn {k, _v}, acc ->
       Map.put(acc, k, "observer")
     end)
 

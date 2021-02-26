@@ -98,24 +98,35 @@ defmodule Bulls.GameServer do
   end
 
   def handle_info(:end_round, state0) do
-    if Game.round_over?(state0) do
-      state1 = Game.end_round(state0)
-      if state1.gamephase == "playing" do
-        Process.send_after(self(), :end_round, 30_000)
-      end
-      BullsWeb.Endpoint.broadcast(state1.gamename, "view", Game.view(state1))
-      {:noreply, state1}
-    else
-      Process.send_after(self(), :end_round, 1_000)
-      {:noreply, state0}
+    cond do
+      # round ended before 30 seconds
+      state0.gamephase == "setup" ->
+        {:noreply, state0}
+      # 30 seconds are done
+      Game.round_over?(state0) ->
+        state1 = Game.end_round(state0)
+        if state1.gamephase == "playing" do
+          Process.send_after(self(), :end_round, 30_000)
+        end
+        BullsWeb.Endpoint.broadcast(state1.gamename, "view", Game.view(state1))
+        {:noreply, state1}
+      # in case the game.ex timer is desynced,
+      # check again in 1 second
+      true ->
+        Process.send_after(self(), :end_round, 1_000)
+        {:noreply, state0}
     end
   end
 
   def handle_info(:update_clock, state0) do
-    Process.send_after(self(), :update_clock, 1_000)
-    state1 = Game.tick(state0)
-    BullsWeb.Endpoint.broadcast(state1.gamename, "view", Game.view(state1))
-    {:noreply, state1}
+    if state0.gamephase == "setup" do
+      {:noreply, state0}
+    else
+      Process.send_after(self(), :update_clock, 1_000)
+      state1 = Game.tick(state0)
+      BullsWeb.Endpoint.broadcast(state1.gamename, "view", Game.view(state1))
+      {:noreply, state1}
+    end
   end
 
   def init(game) do

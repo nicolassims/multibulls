@@ -44,8 +44,8 @@ defmodule Bulls.Game do
       fullGuess = inspect(guess) <> " -- A" <> inspect(matchedplaces) <> "B" <> inspect(matchednumbers)
 
       stWithNewGuess = case Map.fetch(st.tempguesses, user) do
-        {:ok, guesslist} -> st
-        :error -> %{ st | tempguesses: Map.put(st.tempguesses, user, fullGuess) }
+        {:ok, _guesslist} -> st
+        :error -> %{ st | tempguesses: Map.put(st.tempguesses, user, [fullGuess]) }
       end
 
       check_win(stWithNewGuess)

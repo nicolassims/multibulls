@@ -259,7 +259,7 @@ function Bulls() {
       bodypart.push([
         <div key={mapkey} className="column">
           <p>{mapkey}</p>
-          <p>{data.join('\n').replace(/\\"|"/g, '')}</p>
+          <p>{data.join('\n').replace(/\\"|"|\| ni/g, '')}</p>
         </div>
       ])
     }

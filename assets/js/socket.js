@@ -73,7 +73,7 @@ export function ch_changerole(role) {
 }
 
 export function ch_ping() {
-  channel.push("ping", guess)
+  channel.push("ping", {})
          .receive("ok", state_update)
          .receive("error", resp => {
            console.log("Unable to push", resp)

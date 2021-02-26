@@ -59,8 +59,8 @@ defmodule BullsWeb.GameChannel do
   @impl true
   def handle_in("ping", _payload, socket) do
     game = socket.assigns[:name]
-
     view = GameServer.view(game)
     broadcast(socket, "view", view)
+    {:reply, {:ok, view}, socket}
   end
 end

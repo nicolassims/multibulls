@@ -11,6 +11,7 @@ let state = {
   gamephase: null,
   lastwinners: [],
   userstats: new Map(),
+  roundtime: 30,
 };
 
 let username = null;
@@ -65,6 +66,14 @@ export function ch_changerole(role) {
   newmap['user'] = username;
   newmap['role'] = role;
   channel.push("change role", newmap)
+         .receive("ok", state_update)
+         .receive("error", resp => {
+           console.log("Unable to push", resp)
+         });
+}
+
+export function ch_ping() {
+  channel.push("ping", guess)
          .receive("ok", state_update)
          .receive("error", resp => {
            console.log("Unable to push", resp)

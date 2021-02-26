@@ -98,7 +98,6 @@ defmodule Bulls.GameServer do
   def handle_info(:end_round, state0) do
     if Game.round_over?(state0) do
       Process.send_after(self(), :end_round, 30_000)
-
     else
       {:noreply, state0}
     end
@@ -107,9 +106,6 @@ defmodule Bulls.GameServer do
   def handle_info(:update_clock, state0) do
     Process.send_after(self(), :update_clock, 1_000)
     state1 = Game.tick(state0)
-    BullsWeb.Endpoint.broadcast()
-    Phoenix.Endpoint.broadcast()
-    broadcast(socket, "view", Game.view(state1))
     {:noreply, state1}
   end
 

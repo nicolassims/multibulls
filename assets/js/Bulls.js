@@ -154,6 +154,7 @@ function Controls({guess, _reset}) {
   function keyPress(ev) {
     if (ev.key == "Enter") {
       guess(text);
+      setText("");
     }
   }
 

@@ -36,7 +36,7 @@ defmodule BullsWeb.GameChannel do
     user = socket.assigns[:user]
     game = socket.assigns[:name]
     view = GameServer.user_leave(game, user)
-
+    broadcast(socket, "view", view)
     {:reply, {:ok, view}, socket}
   end
 
@@ -54,13 +54,5 @@ defmodule BullsWeb.GameChannel do
     else
       {:reply, {:error, "Change Denied"}, socket}
     end
-  end
-
-  @impl true
-  def handle_in("ping", _payload, socket) do
-    game = socket.assigns[:name]
-    view = GameServer.view(game)
-    broadcast(socket, "view", view)
-    {:reply, {:ok, view}, socket}
   end
 end

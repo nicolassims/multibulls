@@ -136,8 +136,8 @@ defmodule Bulls.Game do
   end
 
   def secret_guessed?(st) do
-    Enum.any?(Map.values(st.guesses),
-          fn [lastguess | _rest] -> String.contains?(lastguess, "A4") end)
+    Enum.any?(Map.values(st.tempguesses),
+          fn x -> String.contains?(x, "A4") end)
   end
 
   # TODO switch to tempguess, add check that all players have guessed
@@ -158,8 +158,8 @@ defmodule Bulls.Game do
   # updates user win/loss stats and lastwinners
   def record_wins(st) do
     #will become lastwinners
-    winnerlist = Enum.reduce(st.guesses, [], fn {k, v}, acc ->
-      if (Enum.any?(v, fn x -> String.contains?(x, "A4") end)) do
+    winnerlist = Enum.reduce(st.tempguesses, [], fn {k, v}, acc ->
+      if (String.contains?(v, "A4")) do
         [k | acc]
       else
         acc

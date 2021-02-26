@@ -1,3 +1,4 @@
+# Supervisor based on multip[ayer hangman lecture code
 defmodule Bulls.GameSup do
   use DynamicSupervisor
 

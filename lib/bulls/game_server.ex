@@ -1,3 +1,5 @@
+# Gameserver start with registry and supervisor based on
+# lecture code for multiplayer Hangman
 defmodule Bulls.GameServer do
   use GenServer
 

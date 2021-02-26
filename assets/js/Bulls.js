@@ -310,7 +310,7 @@ function Bulls() {
       </div>
     );
   } else {
-    window.setInterval(fetchTime, 1000);
+    //window.setInterval(fetchTime, 1000);
     body = (
       <div>
         {roundtime} seconds left!

@@ -109,6 +109,7 @@ defmodule Bulls.GameServer do
   def handle_info(:update_clock, state0) do
     Process.send_after(self(), :update_clock, 1_000)
     state1 = Game.tick(state0)
+    BullsWeb.Endpoint.broadcast("game:game", "view", Game.view(state1))
     {:noreply, state1}
   end
 

@@ -2,8 +2,9 @@ defmodule Bulls.Game do
   # This module doesn't do stuff,
   # it computes stuff.
 
-  def new do
+  def new(gamename) do
     %{
+      gamename: gamename,
       secret: random_secret(),
       guesses: Map.new(),
       tempguesses: Map.new(),

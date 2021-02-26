@@ -21,7 +21,7 @@ defmodule Bulls.GameServer do
   end
 
   def start_link(gamename) do
-    game = BackupAgent.get(gamename) || Game.new
+    game = BackupAgent.get(gamename) || Game.new(gamename)
     GenServer.start_link(
       __MODULE__,
       game,
@@ -109,7 +109,7 @@ defmodule Bulls.GameServer do
   def handle_info(:update_clock, state0) do
     Process.send_after(self(), :update_clock, 1_000)
     state1 = Game.tick(state0)
-    BullsWeb.Endpoint.broadcast("game:game", "view", Game.view(state1))
+    BullsWeb.Endpoint.broadcast("game:" <> state1.gamename, "view", Game.view(state1))
     {:noreply, state1}
   end
 
